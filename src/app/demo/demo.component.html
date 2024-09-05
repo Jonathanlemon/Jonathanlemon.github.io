@@ -1,0 +1,23 @@
+<div class="container">
+    <div>
+        <p class="display-6">Select Demo</p>
+    </div>
+
+    <div>
+        <hr>
+        <div class="row">
+            <div class="d-flex col-lg col-md-6 mb-4 m-1 justify-content-center" *ngFor="let sketch of canvasList">
+                <button class="btn btn-outline-primary mb-2 me-2" (click)="handleClick(sketch.id)">{{sketch.name}}</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="d-flex flex-column col-lg col-md-6 mb-4 shadow border m-1 align-items-center">
+                <div id="canvas-container1" class="d-flex flex-column align-items-center mt-4 mb-2" style="min-width: 500; max-width: 500;">
+                    <app-canvas [sketchID]="activeCanvas" [parentID]="'canvas-container1'"></app-canvas>
+                </div>
+                <p class="text-secondary">{{canvasList[activeCanvas].description}}</p>
+        </div>
+    </div>
+</div>

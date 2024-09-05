@@ -1,0 +1,37 @@
+.jumbotron{
+    padding: 2rem 1rem;
+    background: linear-gradient(var(--degree), rgb(3, 3, 114), rgb(61, 212, 212));
+    animation-timing-function: ease-in-out;
+    animation-duration: 10s;
+    animation-direction: alternate-reverse;
+    animation-iteration-count: infinite;
+    animation-name: rotate;
+    color: white;
+}
+:root {
+    --degree: 0deg;
+}
+@property --degree {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+@keyframes rotate{
+    0% {
+        --degree: 0deg;
+    }
+    
+    25% {
+        --degree: 90deg;
+    }
+    50% {
+        --degree: 180deg;
+    }
+    75% {
+        --degree: 270deg;
+    }
+    100% {
+        --degree: 360deg;
+    }
+}
