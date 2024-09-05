@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { NextNotification } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -267,6 +268,245 @@ export class SketchService {
         p.background(255);
         
       }
+    },
+
+    (p: any) => {
+      let rows: number;
+      let cols: number;
+      let scale: number;
+      let nodes = [[]] as any[][];
+      let target: any;
+      let home: any;
+      let nextUp: any;
+      let drawing = false;
+      let speed: any;
+      let respawnBtn: any;
+      let playBtn: any;
+
+      class Node{//constructor for segments
+        x: any;
+        y: any;
+        parent: Node;
+        constructor(paramx: any, paramy: any, p: any){
+          this.x=paramx;
+          this.y=paramy;
+          this.parent=p;
+        }
+      };
+
+      const drawHome = () => {
+        p.fill(0,0,255)
+        p.noStroke();
+        p.rect(home.x*scale, home.y*scale, scale, scale);
+      };
+
+      const drawTarget = () => {
+        p.fill(255,0,0)
+        p.noStroke();
+        p.rect(target.x*scale, target.y*scale, scale, scale);
+      };
+
+      const drawNeighbors = (n: Node) => {
+        p.noFill();
+        p.stroke(0,255,0);
+        p.rect(n.x*scale, n.y*scale, scale, scale);
+      };
+
+      class Queue {
+        qList = [] as any[];
+        head = -1;
+        tail = -1;
+        
+        enqueue = (item: any) => {
+          if (this.head == -1) {
+            this.head++;
+          }
+          this.tail++;
+          this.qList.push(item);
+        };
+        
+        dequeue = () => {
+          if (this.head == -1) {
+            console.log("Queue underflow!");
+            return 0;
+          } else if (this.head == this.tail) {
+            const p = this.qList.splice(0, 1)[0];
+            this.head--;
+            this.tail--;
+            return p;
+          } else {
+            this.tail--;
+            return this.qList.splice(0, 1)[0];
+          }
+        };
+        
+        size = () => {
+          return this.qList.length;
+        };
+        
+        peek = () => {
+          if (this.head == -1) {
+            console.log("Queue is empty!");
+          } else {
+            return this.qList[this.head];
+          }
+        };
+        
+        list = () => {
+          return this.qList;
+        };
+      }
+
+      const respawn = () => {
+        p.background(41);
+        p.fill(0);
+        scale=10;
+        speed=0;
+        nextUp = new Queue();
+        rows = p.height / scale;
+        cols = p.width / scale;
+
+        //Initialize two nodes
+        target=new Node(p.floor(p.random(0, cols)), p.floor(p.random(0, cols)), null);
+        home=new Node(p.floor(p.random(0, cols)), p.floor(p.random(0, cols)), null);
+
+        nodes =  (Array.from(Array(cols), () => new Array(rows)));
+
+        //Build board and initialize all nodes as unvisited
+        for(let i=0; i<rows; i++){
+          for(let j=0; j<cols; j++){
+            p.rect(j*scale, i*scale, 20, 20);
+            nodes[j][i] = 0;
+          }
+        }
+
+        //Draw two nodes and begin
+        drawHome();
+        drawTarget();
+        nextUp.enqueue(home);
+      };
+
+      const play = () => {
+        speed=2;
+      }
+
+
+      p.setup = () => {
+        p.createCanvas(500,500);
+        respawnBtn = p.createButton("Restart");
+        respawnBtn.addClass("btn btn-outline-primary mb-2 me-2 mt-2");
+        respawnBtn.mousePressed(respawn);
+
+        playBtn = p.createButton("Play");
+        playBtn.addClass("btn btn-outline-primary mb-2 me-2 mt-2");
+        playBtn.mousePressed(play);
+        speed=0;
+        p.background(41);
+        p.fill(0);
+        scale=10;
+
+        nextUp = new Queue();
+        rows = p.height / scale;
+        cols = p.width / scale;
+
+        //Initialize two nodes
+        target=new Node(p.floor(p.random(0, cols)), p.floor(p.random(0, cols)), null);
+        home=new Node(p.floor(p.random(0, cols)), p.floor(p.random(0, cols)), null);
+
+        nodes =  (Array.from(Array(cols), () => new Array(rows)));
+
+        //Build board and initialize all nodes as unvisited
+        for(let i=0; i<rows; i++){
+          for(let j=0; j<cols; j++){
+            p.rect(j*scale, i*scale, 20, 20);
+            nodes[j][i] = 0;
+          }
+        }
+
+        //Draw two nodes and begin
+        drawHome();
+        drawTarget();
+        nextUp.enqueue(home);
+      }
+
+      const drawShortestPath = () => {
+        let n = target;
+        p.noStroke()
+        p.fill(255, 255, 0);
+        while(n != home){  
+          p.rect(n.x*scale, n.y*scale, scale, scale);
+          n = n.parent;
+        }
+      }
+
+      //Main BFS program
+      const getNeighbors = (n: Node) => {
+        if(n.x == target.x && n.y == target.y){
+          target.parent = n;
+          drawShortestPath();
+          nextUp = new Queue();
+          return;
+        }
+        nodes[n.x][n.y] = 1;
+        drawNeighbors(n);
+        if( n.x-1 >= 0){
+          if(nodes[n.x-1][n.y] == 0){
+            nextUp.enqueue(new Node(n.x-1, n.y, n));
+            nodes[n.x-1][n.y] = 1;
+          }
+
+        }
+        if( n.x+1 < cols){
+          if(nodes[n.x+1][n.y] == 0){
+            nextUp.enqueue(new Node(n.x+1, n.y, n));
+            nodes[n.x+1][n.y] = 1;
+          }
+
+        }
+        if( n.y-1 >= 0){
+          if(nodes[n.x][n.y-1] == 0){
+            nextUp.enqueue(new Node(n.x, n.y-1, n));
+            nodes[n.x][n.y-1] = 1;
+          }
+
+        }
+        if( n.y+1 < rows){
+          if(nodes[n.x][n.y+1] == 0){
+            nextUp.enqueue(new Node(n.x, n.y+1, n));
+            nodes[n.x][n.y+1] = 1;
+          }
+
+        }
+      };
+
+      p.draw = () => {
+        //Draw animation based on speed
+        for(let i=0;i<speed;i++){
+          if(nextUp.size()>0){
+            getNeighbors(nextUp.dequeue());
+          }
+        }
+        
+        //Handle mouse drawing wall
+        if(drawing){
+          let x = p.floor(p.floor(p.mouseX)/scale);
+          let y = p.floor(p.floor(p.mouseY)/scale);
+          if(x < cols && y < rows && x >= 0 && y >= 0){
+            nodes[x][y] = 2;
+            p.fill(200);
+            p.noStroke();
+            p.rect(x*scale, y*scale, scale, scale);
+          }
+        }
+        drawHome();
+        drawTarget();
+        if(speed!=0){
+          speed=p.floor(nextUp.size()/3)+1;
+        }
+      }
+
+      window.addEventListener("mousedown", ()=>{drawing = true;});
+      window.addEventListener("mouseup", ()=>{drawing = false;});
     }
   ];
 
@@ -274,7 +514,9 @@ export class SketchService {
     {id: 0, name: "Fractal Tree", description: "Interact using the slider"},
     {id: 1, name: "Snake", description: "Use WASD to play"},
     {id: 2, name: "Game of Life", description: "Click to generate a new pattern"},
-    {id: 3, name: "3D Graphics", description: "Elegant 3D animation"}
+    {id: 3, name: "3D Graphics", description: "Elegant 3D animation"},
+    {id: 4, name: "3D Terrain", description: "Elegant 3D animation"},
+    {id: 5, name: "Pathfinding", description: "Click and drag to make walls. Click respawn to generate a new source and target location."}
   ];
 
   constructor() { }
