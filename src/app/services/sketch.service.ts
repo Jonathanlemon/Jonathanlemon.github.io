@@ -60,6 +60,11 @@ export class SketchService {
       p.setup= () => {
         p.createCanvas(500, 500);//make 20x20 board
         trail.push(new Segment(10,10));//make first segment at (10,10) aka (200,200)
+        //Ensure apple can't spawn ontop of snake
+        while(aX == 10 && aY == 10){
+          aX=Math.round(Math.random()*19);//apple x
+          aY=Math.round(Math.random()*19);//apple y
+        }
         p.frameRate(15);
       };
 
@@ -73,15 +78,22 @@ export class SketchService {
             p.rect(trail[i].x*scl,trail[i].y*scl,scl,scl);
             if(trail[0].x==trail[i].x&&trail[0].y==trail[i].y){//check for collision
                 restart();
+                break;
+            }
+            if(trail[i].x==aX&&trail[i].y==aY){//check if snake got the apple
+              trail.push(new Segment(trail[trail.length-1].x,trail[trail.length-1].y));//add segment to end of snake
+              aX=p.round(Math.random()*19);//spawn new food
+              aY=p.round(Math.random()*19);
             }
           }
 
-          if(trail[0].x==aX&&trail[0].y==aY){//check if head got the apple
+          if(trail[0].x==aX&&trail[0].y==aY){//check if snake got the apple
             trail.push(new Segment(trail[trail.length-1].x,trail[trail.length-1].y));//add segment to end of snake
             aX=p.round(Math.random()*19);//spawn new food
             aY=p.round(Math.random()*19);
-
           }
+
+
 
           for(let i=trail.length-1; i>0;i--){//update trail locations
             trail[i].x=trail[i-1].x;
@@ -105,6 +117,10 @@ export class SketchService {
         yVel=0;
         trail=[];
         trail.push(new Segment(10,10));
+        while(aX == 10 && aY == 10){
+          aX=Math.round(Math.random()*19);//apple x
+          aY=Math.round(Math.random()*19);//apple y
+        }
       };
 
       window.addEventListener("keydown",function(event){//detect and change velocities based on User input
