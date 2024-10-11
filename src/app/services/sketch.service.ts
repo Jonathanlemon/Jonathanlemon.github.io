@@ -26,6 +26,8 @@ export class SketchService {
         p.background(41);
         p.stroke(0);
         p.pointLight(255, 255, 255, 0, -200, 100);
+        p.pointLight(255, 255, 255, 0, -200, 100);
+
         p.ambientLight(10);
         p.fill(74, 103, 65);
         p.rotateX(p.PI/2.5);

@@ -1,6 +1,6 @@
 .jumbotron{
     padding: 2rem 1rem;
-    background: linear-gradient(var(--degree), rgb(3, 3, 114), rgb(61, 212, 212));
+    background: linear-gradient(var(--degree), rgb(245, 102, 0), rgb(82, 45, 128));
     animation-timing-function: ease-in-out;
     animation-duration: 10s;
     animation-direction: alternate-reverse;
