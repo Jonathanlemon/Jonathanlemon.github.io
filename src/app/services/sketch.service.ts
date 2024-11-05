@@ -8,52 +8,71 @@ export class SketchService {
 
   sketches = [
     (p: any) => {
-      let scale = 25;
-      let w = 1000;
-      let h = 1000;
-      let cols = w / scale;
-      let rows = h / scale;
-
-      let dist = 0;
-
-      let z = [[]] as any[][];
-      p.setup = () => {
-        p.createCanvas(500,500, p.WEBGL);
-        z = (Array.from(Array(cols), () => new Array(rows)));
-      }
-
-      p.draw = () => {
-        p.background(41);
-        p.stroke(0);
-        p.pointLight(255, 255, 255, 0, -200, 100);
-        p.pointLight(255, 255, 255, 0, -200, 100);
-
-        p.ambientLight(10);
-        p.fill(74, 103, 65);
-        p.rotateX(p.PI/2.5);
-        p.translate(-w/2, -h/2, -100);
-        let yoff = dist;
-        for(let y=0; y < rows - 1; y++){
-          let xoff = 0;
-          for(let x=0; x < cols - 1; x++){
-            z[x][y]=p.map(p.noise(xoff, yoff), 0, 1, -250, 250);
-            xoff += 0.05;
-          }
-          yoff -= 0.05;
+    let scale = 25;  // Adjust to control grid density
+    let w = 1000;
+    let h = 1000;
+    let cols = w / scale;
+    let rows = h / scale;
+    
+    let dist = 0;
+    let z = [] as any;
+    
+    p.setup = () => {
+      p.createCanvas(500, 500, p.WEBGL);
+      
+      // Initialize `z` array with noise values
+      z = Array.from({ length: cols }, () => Array(rows).fill(0));
+      let yoff = dist;
+      for (let y = 0; y < rows; y++) {
+        let xoff = 0;
+        for (let x = 0; x < cols; x++) {
+          z[x][y] = p.map(p.noise(xoff, yoff), 0, 1, -250, 250);
+          xoff += 0.05;
         }
-        dist += 0.05;
-
-        for(let y=0; y < rows - 1; y++){
-          p.beginShape(p.TRIANGLE_STRIP);
-          for(let x=0; x < cols - 1; x++){
-            p.vertex(x*scale, y*scale, z[x][y]);
-            p.vertex(x*scale, (y+1)*scale, z[x][y+1]);
-          }
-          p.endShape();
-        }
-
+        yoff += 0.05;
       }
-    },
+    }
+    
+    p.draw = () => {
+      p.background(41);
+      p.stroke(0);
+      p.pointLight(255, 255, 255, 0, -200, 100);
+      p.ambientLight(10);
+      p.fill(74, 103, 65);
+      p.rotateX(p.PI / 2.5);
+      p.translate(-w / 2, -h / 2, -100);
+    
+      // Calculate new noise row for the "leading edge"
+      let newRow = [];
+      let xoff = 0;
+      for (let x = 0; x < cols; x++) {
+        newRow[x] = p.map(p.noise(xoff, dist), 0, 1, -250, 250);
+        xoff += 0.05;
+      }
+      
+      // Shift rows in `z` and insert new row at the beginning
+      for (let y = rows - 1; y > 0; y--) {
+        for (let x = 0; x < cols; x++) {
+          z[x][y] = z[x][y - 1];
+        }
+      }
+      for (let x = 0; x < cols; x++) {
+        z[x][0] = newRow[x];
+      }
+    
+      // Render the terrain
+      for (let y = 0; y < rows - 1; y++) {
+        p.beginShape(p.TRIANGLE_STRIP);
+        for (let x = 0; x < cols; x++) {
+          p.vertex(x * scale, y * scale, z[x][y]);
+          p.vertex(x * scale, (y + 1) * scale, z[x][y + 1]);
+        }
+        p.endShape();
+      }
+    
+      // Update `dist` to move forward in the noise space
+      dist += 0.05;
+    }},
 
     (p: any) => {
       let rows: number;
