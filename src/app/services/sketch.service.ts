@@ -43,7 +43,7 @@ export class SketchService {
       p.translate(-w / 2, -h / 2, -100);
     
       // Calculate new noise row for the "leading edge"
-      let newRow = [];
+      let newRow = [] as any;
       let xoff = 0;
       for (let x = 0; x < cols; x++) {
         newRow[x] = p.map(p.noise(xoff, dist), 0, 1, -250, 250);
