@@ -296,10 +296,12 @@ export class SketchService {
           let x = p.floor(p.floor(p.mouseX)/scale);
           let y = p.floor(p.floor(p.mouseY)/scale);
           if(x < cols && y < rows && x >= 0 && y >= 0){
-            nodes[x][y] = 2;
-            p.fill(200);
-            p.noStroke();
-            p.rect(x*scale, y*scale, scale, scale);
+            if(!(x == home.x && y == home.y) && !(x == target.x && y == target.y)){
+              nodes[x][y] = 2;
+              p.fill(200);
+              p.noStroke();
+              p.rect(x*scale, y*scale, scale, scale);
+            }
           }
         }
         drawHome();
@@ -551,7 +553,7 @@ export class SketchService {
   sketchDetails = [
     {id: 0, name: "3D Terrain Generator", description: "Perlin Noise Terrain Generation."},
     {id: 1, name: "Pathfinding", description: "Click and drag to make walls. Click restart to generate a new source and target location. Click play to begin pathfinding."},
-    {id: 2, name: "Snake", description: "Use WASD to play."},
+    {id: 2, name: "Snake", description: "Use arrow keys to play."},
     {id: 3, name: "Game of Life", description: "Click to generate a new pattern."},
     {id: 4, name: "3D Graphics", description: "Elegant 3D animation."},
 
