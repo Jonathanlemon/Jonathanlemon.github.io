@@ -196,8 +196,8 @@ export class SketchService {
 
 
       p.setup = () => {
-        let canv = p.createCanvas(500,500);
-        stopTouchScrolling(canv);
+        p.createCanvas(500,500);
+        stopTouchScrolling(document.getElementById("canvasContainer1"));
 
         respawnBtn = p.createButton("Restart");
         respawnBtn.addClass("btn btn-outline-primary mb-2 me-2 mt-2");
