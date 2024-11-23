@@ -196,7 +196,9 @@ export class SketchService {
 
 
       p.setup = () => {
-        p.createCanvas(500,500);
+        let canv = p.createCanvas(500,500);
+        stopTouchScrolling(canv);
+
         respawnBtn = p.createButton("Restart");
         respawnBtn.addClass("btn btn-outline-primary mb-2 me-2 mt-2");
         respawnBtn.mousePressed(respawn);
@@ -316,9 +318,25 @@ export class SketchService {
       window.addEventListener("mouseup", ()=>{drawing = false;});
       window.addEventListener("touchend", ()=>{drawing = true;});
 
-      function touchStarted(){
-        drawing = true;
-      }
+      function stopTouchScrolling(canvas: any){
+        // Prevent scrolling when touching the canvas
+        window.addEventListener("touchstart", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        window.addEventListener("touchend", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        window.addEventListener("touchmove", function (e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        }
     },
 
     (p: any) => {
