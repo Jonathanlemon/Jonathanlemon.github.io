@@ -312,7 +312,13 @@ export class SketchService {
       }
 
       window.addEventListener("mousedown", ()=>{drawing = true;});
+      window.addEventListener("touchstart", ()=>{drawing = true;});
       window.addEventListener("mouseup", ()=>{drawing = false;});
+      window.addEventListener("touchend", ()=>{drawing = true;});
+
+      function touchStarted(){
+        drawing = true;
+      }
     },
 
     (p: any) => {
