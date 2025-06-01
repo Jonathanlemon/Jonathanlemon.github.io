@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NextNotification } from 'rxjs';
+import { courseData, oldCourseData } from './courseData';
 
 @Injectable({
   providedIn: 'root'
@@ -571,6 +572,123 @@ export class SketchService {
         }
         
       }
+    },
+
+    (p: any) => {
+
+      class Course {
+        name: string;
+        cup: string;
+
+        constructor(name: string, cup: string){
+          this.name = name;
+          this.cup = cup;
+        }
+
+        toString(): string {
+          return this.name +" | "+this.cup;
+        }
+      }
+
+      let list: Course[] = [];
+      let w: number;
+      let h: number;
+      let top: number;
+      let spinning = false;
+      let renderSize = 7;
+      let speed = 0;
+      let offsetY = 0;
+      let friction = 0.95;
+      let applyFriction = true;
+
+
+      oldCourseData.forEach(entry => {
+        list.push(new Course(entry.name, entry.cup));
+      });
+
+      p.setup = () => {
+        p.createCanvas(500,500);
+        w = 500;
+        h = 500;
+        top = 0;
+        p.textAlign(p.CENTER, p.CENTER);
+        //Shuffle the 'deck' of tracks
+        shuffle();
+      }
+
+      p.draw = () => {
+        //Setup the window
+        p.noStroke();
+        p.background(41);
+        p.fill(50,80,200);
+        p.rect(w/2 - 200, h/2 - 200, 400, 400);
+        p.fill(200,185,0);
+        p.rect(w/2 - 175, h/2 - 25, 350, 50);
+
+        //Render the sliding window of maps (7 maps loaded, so that animation always looks smooth)
+        p.fill(255);
+        p.strokeWeight(0.5);
+        p.textSize(16);
+
+        for(let i=0; i<renderSize; i++)
+        {
+          p.text(list[(top + i)%list.length], w/2, h/2 - 150 + 50*i - offsetY);
+        }
+
+        //Set the window over the edges to hide spontaneous generation and make it look like a smooth wheel
+        p.fill(41);
+        p.noStroke();
+        p.rect(0, h/2 +100, 500, 200)
+        p.rect(0, h/2 -300, 500, 200)
+
+        //Handle spinning
+        if (spinning) {
+          offsetY += speed;
+
+          // When offset reaches a full symbol height, snap to next item, used while to account for speeds such as 100, in which case we need to iterate twice and subtract twice
+          while(offsetY >= 50){
+            offsetY -= 50;
+            iterate();
+          }
+          
+          if(applyFriction){
+            speed *= friction;
+          }
+          applyFriction = !applyFriction;
+
+          if (speed < 1) {
+            spinning = false;
+            speed = 0;
+            if(offsetY > 25){
+              iterate();
+            }
+            offsetY = 0; // align perfectly to center
+          }
+        }
+      }
+
+      function mousePressed() {
+        if (!spinning) {
+          shuffle();
+          spinning = true;
+          speed = p.floor(p.random(50, 100))
+        }
+      }
+
+      window.addEventListener("click", mousePressed);
+
+      const shuffle = () => {
+        for(let i=list.length-1; i>0; i--){
+          let swapPos = p.floor(p.random(i));
+          let temp = list[i];
+          list[i] = list[swapPos];
+          list[swapPos] = temp;
+        }
+      }
+
+      const iterate = () => {
+        top = (top+1) % list.length
+      }
     }
   ];
 
@@ -580,7 +698,7 @@ export class SketchService {
     {id: 2, name: "Snake", description: "Use arrow keys to play."},
     {id: 3, name: "Game of Life", description: "Click to generate a new pattern."},
     {id: 4, name: "3D Graphics", description: "Elegant 3D animation."},
-
+    {id: 5, name: "Random Track Selector - Mario Kart World [Under Development]", description: "Randomized Track Selector for Mario Kart World. - Click to generate"},
   ];
 
   constructor() { }
