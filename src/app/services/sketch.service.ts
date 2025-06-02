@@ -590,6 +590,23 @@ export class SketchService {
         }
       }
 
+      let audioContext = new AudioContext();
+      let clickBuffer: AudioBuffer | null = null;
+
+      async function loadClickSound() {
+        const response = await fetch("click.wav");
+        const arrayBuffer = await response.arrayBuffer();
+        clickBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      }
+
+      function playClickSound() {
+        if (!clickBuffer) return;
+        const source = audioContext.createBufferSource();
+        source.buffer = clickBuffer;
+        source.connect(audioContext.destination);
+        source.start();
+      }
+
       let list: Course[] = [];
       let w: number;
       let h: number;
@@ -598,8 +615,9 @@ export class SketchService {
       let renderSize = 7;
       let speed = 0;
       let offsetY = 0;
-      let friction = 0.95;
-      let applyFriction = true;
+      let friction = 0.99;
+      let frictionDelay = 20;
+      let applyFriction = false;
 
 
       oldCourseData.forEach(entry => {
@@ -612,6 +630,7 @@ export class SketchService {
         h = 500;
         top = 0;
         p.textAlign(p.CENTER, p.CENTER);
+        loadClickSound();
         //Shuffle the 'deck' of tracks
         shuffle();
       }
@@ -654,7 +673,6 @@ export class SketchService {
           if(applyFriction){
             speed *= friction;
           }
-          applyFriction = !applyFriction;
 
           if (speed < 1) {
             spinning = false;
@@ -671,7 +689,7 @@ export class SketchService {
         if (!spinning) {
           shuffle();
           spinning = true;
-          speed = p.floor(p.random(50, 100))
+          speed = p.floor(p.random(40, 50))
         }
       }
 
@@ -687,7 +705,16 @@ export class SketchService {
       }
 
       const iterate = () => {
-        top = (top+1) % list.length
+        //Shift the track items being rendered, up by 1 item, so that the topmost text "disappears" and bottommost text "renders in". Basically unloads the course going out, and loads the new course coming in, play the unit spin sound, and determine whether friction has begun.
+        top = (top+1) % list.length;
+        playClickSound();
+        if(!applyFriction && frictionDelay >= 0){
+          frictionDelay -= 1;
+        }
+        if(!applyFriction && frictionDelay < 0){
+          //Once the whole list has been spun over, begin applying friction
+          applyFriction = true;
+        }
       }
     }
   ];
@@ -698,7 +725,7 @@ export class SketchService {
     {id: 2, name: "Snake", description: "Use arrow keys to play."},
     {id: 3, name: "Game of Life", description: "Click to generate a new pattern."},
     {id: 4, name: "3D Graphics", description: "Elegant 3D animation."},
-    {id: 5, name: "Random Track Selector - Mario Kart World [Under Development]", description: "Randomized Track Selector for Mario Kart World. - Click to generate"},
+    {id: 5, name: "Random Track Selector - Mario Kart", description: "Randomized Track Selector for Mario Kart World/Mario Kart 8 - Click to generate"},
   ];
 
   constructor() { }
