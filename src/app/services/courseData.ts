@@ -2,8 +2,8 @@ export const courseData = [
   // Mushroom Cup
   { name: "Mario Bros. Circuit", cup: "Mushroom" },
   { name: "Crown City", cup: "Mushroom" },
-  { name: "Salty Salty Speedway", cup: "Mushroom" },
-  { name: "Starview Peak", cup: "Mushroom" },
+  { name: "Whistlestop Summit", cup: "Mushroom" },
+  { name: "DK Spaceport", cup: "Mushroom" },
 
   // Flower Cup
   { name: "Desert Hills", cup: "Flower" },
@@ -13,40 +13,40 @@ export const courseData = [
 
   // Star Cup
   { name: "DK Pass", cup: "Star" },
+  { name: "Starview Peak", cup: "Star" },
   { name: "Sky-High Sundae", cup: "Star" },
   { name: "Wario Shipyard", cup: "Star" },
-  { name: "Koopa Troopa Beach", cup: "Star" },
 
   // Shell Cup
+  { name: "Koopa Troopa Beach", cup: "Shell" },
   { name: "Faraway Oasis", cup: "Shell" },
-  { name: "Crown City 2", cup: "Shell" },
+  { name: "Crown City", cup: "Shell" },
   { name: "Peach Stadium", cup: "Shell" },
-  { name: "Peach Beach", cup: "Shell" },
 
   // Banana Cup
-  { name: "Salty Salty Speedway 2", cup: "Banana" },
+  { name: "Peach Beach", cup: "Banana" },
+  { name: "Salty Salty Speedway", cup: "Banana" },
   { name: "Dino Dino Jungle", cup: "Banana" },
   { name: "Great ? Block Ruins", cup: "Banana" },
-  { name: "Cheep Cheep Falls", cup: "Banana" },
 
   // Leaf Cup
+  { name: "Cheep Cheep Falls", cup: "Leaf" },
   { name: "Dandelion Depths", cup: "Leaf" },
   { name: "Boo Cinema", cup: "Leaf" },
   { name: "Dry Bones Burnout", cup: "Leaf" },
-  { name: "Moo Moo Meadows", cup: "Leaf" },
 
   // Lightning Cup
+  { name: "Moo Moo Meadows", cup: "Lightning" },
   { name: "Choco Mountain", cup: "Lightning" },
-  { name: "Toad’s Factory", cup: "Lightning" },
-  { name: "Bowser’s Castle", cup: "Lightning" },
-  { name: "Rainbow Road", cup: "Lightning" },
+  { name: "Toad's Factory", cup: "Lightning" },
+  { name: "Bowser's Castle", cup: "Lightning" },
 
-  // Acorn Cup
-  { name: "Acorn Heights", cup: "Acorn" },
-  { name: "Mario Circuit", cup: "Acorn" },
-  { name: "Peach Stadium 2", cup: "Acorn" },
-  { name: "Rainbow Road 2", cup: "Acorn" }
-]
+  // Special Cup
+  { name: "Acorn Heights", cup: "Special" },
+  { name: "Super Mario Kart Circuit", cup: "Special" }, // Mario Circuit SNES
+  { name: "Peach Stadium", cup: "Special" },
+  { name: "Rainbow Road", cup: "Special" },
+];
 
 // courses-data.ts
 export const oldCourseData = [

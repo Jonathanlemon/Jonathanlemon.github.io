@@ -620,7 +620,7 @@ export class SketchService {
       let applyFriction = false;
 
 
-      oldCourseData.forEach(entry => {
+      courseData.forEach(entry => {
         list.push(new Course(entry.name, entry.cup));
       });
 
